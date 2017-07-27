@@ -2,6 +2,8 @@
 
 file wrapper
 
+> Proof of concept: Don't use in production!
+
 ## Examples
 
 ```php
