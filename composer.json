@@ -1,0 +1,36 @@
+{
+    "name": "phore/file",
+    "type": "library",
+    "description": "File wrapper",
+    "keywords": ["file", "directory", "url"],
+    "homepage": "http://github.com/phore/file",
+    "license": "Proprietary",
+    "authors": [
+        {
+            "name": "Matthias Leuffen",
+            "email": "matthes@leuffen.de"
+        }
+    ],
+
+
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "nette/tester": "*",
+        "symfony/yaml": "*"
+    },
+    "suggest": {
+        "symfony/yaml": "Allows usage of file($name)->yaml()",
+        "ext-xml": "Needed to support XML format in class Foo"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phore\\File\\": "src/"
+        },
+        "files": [
+            "src/functions.inc.php"
+        ]
+    },
+    "minimum-stability": "dev"
+}
