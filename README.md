@@ -19,7 +19,7 @@ pfile("file.yml")->yaml();
 
 ## Write Encoded data
 
-```
+```php
 pfile("file.json")->json(["some"=>"data"]);
 pfile("file.yml")->yaml(["some"=>"data"]);
 ```
