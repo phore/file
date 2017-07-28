@@ -10,12 +10,15 @@ namespace Phore\File;
  *
  * @return PhoreFile
  */
-function pfile($filename) : PhoreFile {
-    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-    print_r ($backtrace);
+function pe_file($filename) : PhoreFile {
     return new PhoreFile($filename);
 }
 
-function purl (string $url) : PhoreUrl {
+
+function pe_path($path) : PhorePath {
+    return new PhorePath($path);
+}
+
+function pe_url(string $url) : PhoreUrl {
     return new PhoreUrl($url);
 }

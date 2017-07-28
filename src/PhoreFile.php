@@ -10,6 +10,8 @@ namespace Phore\File;
 
 
 use Phore\File\Exception\FileAccessException;
+use Phore\File\Exception\FileNotFoundException;
+use Phore\File\Exception\FileParsingException;
 use Phore\File\Exception\PathOutOfBoundsException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -24,6 +26,33 @@ class PhoreFile
     }
 
 
+    public function path() : PhorePath {
+        return new PhorePath($this->filename);
+    }
+
+    public function fopen(string $mode) : PhoreFileStream {
+        $fp = @fopen($this->filename, $mode);
+        if ( ! $fp)
+            throw new FileAccessException("fopen($this->filename): " . error_get_last()["message"]);
+        return new PhoreFileStream($fp, $this);
+    }
+
+
+    private function _read_content_locked () {
+        $file = $this->fopen("r")->flock(LOCK_SH);
+        $buf = "";
+        while ( ! $file->feof())
+            $buf .= $file->fread(1024);
+        $file->flock(LOCK_UN);
+        $file->fclose();
+        return $buf;
+    }
+
+    private function _write_content_locked ($content) {
+        $this->fopen("w+")->flock(LOCK_EX)->fwrite($content)->flock(LOCK_UN)->fclose();
+    }
+
+
     /**
      * Set or get Contents of file
      *
@@ -33,15 +62,15 @@ class PhoreFile
      * @throws FileAccessException
      */
     public function content(string $setContent=null) {
-        if (func_num_args() > 0) {
-            if ( ! @file_put_contents($this->filename, $setContent))
-                throw new FileAccessException("Cannot write file '{$this->filename}': " . implode(" ", error_get_last()));
-            return $this;
+        try {
+            if (func_num_args() > 0) {
+                $this->_write_content_locked($setContent);
+                return $this;
+            }
+            return $this->_read_content_locked();
+        } catch (\Exception $e) {
+            throw new $e($e->getMessage(), $e->getCode(), $e);
         }
-        $data = @file_get_contents($this->filename);
-        if ($data === false)
-            throw new FileAccessException("Cannot read file '{$this->filename}': " . implode(" ", error_get_last()));
-        return $data;
     }
 
     /**
@@ -53,29 +82,48 @@ class PhoreFile
     public function yaml($content=null) {
         if ( ! class_exists(Yaml::class))
             throw new \Exception("Cannot read yaml: library symfony/yaml missing.");
+
         if (func_num_args() > 0) {
             $this->content(Yaml::dump($content));
             return $this;
         }
-        return Yaml::parse($this->content());
+        try {
+            return Yaml::parse($this->content());
+        } catch (\Exception $e) {
+            throw new FileParsingException("YAML Parsing of file '{$this->filename}' failed: {$e->getMessage()}", 0, $e);
+        }
     }
 
     /**
      * @param null $content
      *
      * @return $this|array
+     * @throws FileParsingException
      */
     public function json($content=null) {
         if (func_num_args() > 0) {
             $this->content(json_encode($content));
+
             return $this;
         }
         $json = json_decode($content, true);
+        if ($json === null) {
+            throw new FileParsingException(
+                "JSON Parsing of file '{$this->filename}' failed."
+            );
+        }
+
         return $json;
     }
 
 
-    public function resolve() : self {
+    /**
+     * @param $lockDir
+     *
+     * @return PhoreFile
+     * @throws PathOutOfBoundsException
+     */
+    public function resolve($lockDir) : self {
         $parts = explode("/", $this->filename);
         $ret = [];
         foreach ($parts as $part) {
@@ -94,13 +142,23 @@ class PhoreFile
     }
 
 
-    public function unlink() : void {
+    public function rename ($newName) : self {
+        if ( ! @rename($this->filename, $newName))
+            throw new FileAccessException("Cannot rename file '{$this->filename}' to '{$newName}': " . implode(" ", error_get_last()));
+        $this->filename = $newName;
+        return $this;
+    }
+
+    public function unlink() : self {
         if ( ! @unlink($this->filename))
             throw new FileAccessException("Cannot unlink file '{$this->filename}': " . implode(" ", error_get_last()));
+        return $this;
     }
 
     public function mustExist() {
-
+        if ( ! file_exists($this->filename))
+            throw new FileNotFoundException("File '$this->filename' not found");
+        return $this;
     }
 
 

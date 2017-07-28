@@ -4,6 +4,12 @@ file wrapper
 
 > Proof of concept: Don't use in production!
 
+
+## Features
+
+- __File-Locking__: `content()` uses flock to lock file access
+ 
+
 ## Examples
 
 ```php
