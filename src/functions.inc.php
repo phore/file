@@ -15,3 +15,7 @@ function pfile($filename) : PhoreFile {
     print_r ($backtrace);
     return new PhoreFile($filename);
 }
+
+function purl (string $url) : PhoreUrl {
+    return new PhoreUrl($url);
+}
