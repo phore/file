@@ -11,4 +11,4 @@ require __DIR__ . "/../vendor/autoload.php";
 
 
 
-pfile("wurst")->content();
+pfile(__DIR__ . "/../")->content();
