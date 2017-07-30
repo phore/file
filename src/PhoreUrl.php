@@ -125,24 +125,28 @@ class PhoreUrl
         $buf = "";
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($ch, $str) use (&$buf, &$onBody) {
             if ($onBody === false) {
+                echo ".";
                 $buf .= $str;
-                if (($pos = strpos("\r\n\r\n", $str) ) !== false) {
+                if (($pos = strpos($buf, "\r\n\r\n") ) !== false) {
+                    //echo "END OF HEADER: $str";
+
                     $onBody = true;
                     $headerStr = substr($buf, 0, $pos);
                     if ($this->onHeader !== null)
                         ($this->onHeader)($headerStr);
-                    $body = substr($buf, $pos);
+
+
+                    if (strpos(strtoupper($buf), "\nLOCATION:")) {
+                        $onBody = false;
+                        $buf = "";
+                        return strlen($str);
+                    }
+                    $body = substr($buf, $pos+4);
+                    $buf = "";
                     if ($body != "") {
-                        echo "BODY:$body";
                         foreach ($this->receiver as $curRec) {
                             $curRec->onData($body);
                         }
-                    }
-                    echo "Checking for Location in $headerStr...";
-                    if (strpos($headerStr, "Location") !== false) {
-                        echo "LOCATION!";
-                        $buf = "";
-                        $onBody = false;
                     }
                 }
             } else {

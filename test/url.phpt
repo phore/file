@@ -14,9 +14,9 @@ require __DIR__ . "/../vendor/autoload.php";
 Environment::setup();
 
 
-pe_url("http://google.de")->out($result)->outHeader($header)->run(10);
+pe_url("https://google.de")->out($result)->outHeader($header)->run(50);
 
 //print_r ($header);
-//print_r ($result);
+echo $result;
 
 echo "\n=================";
