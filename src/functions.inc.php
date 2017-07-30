@@ -19,6 +19,6 @@ function pe_path($path) : PhorePath {
     return new PhorePath($path);
 }
 
-function pe_url(string $url) : PhoreUrl {
+function load(string $url) : PhoreUrl {
     return new PhoreUrl($url);
 }

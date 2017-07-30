@@ -62,7 +62,8 @@ class PhoreUrl
     }
 
 
-    public function out(&$ref) : self {
+    public function into(&$ref, PhoreUrlHeader &$header = null) : self {
+        $header = new PhoreUrlHeader();
         $ref = "";
         $this->addHandler(new class ($ref) implements PhoreStreamReceiver {
 
