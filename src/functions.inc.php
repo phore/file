@@ -10,15 +10,10 @@ namespace Phore\File;
  *
  * @return PhoreFile
  */
-function pe_file($filename) : PhoreFile {
+function file($filename) : PhoreFile {
     return new PhoreFile($filename);
 }
 
-
-function pe_path($path) : PhorePath {
+function path($path) : PhorePath {
     return new PhorePath($path);
-}
-
-function load(string $url) : PhoreUrl {
-    return new PhoreUrl($url);
 }
