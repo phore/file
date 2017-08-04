@@ -93,6 +93,17 @@ class PhorePath
         return new self($path, $this->type);
     }
 
+    /**
+     * strip the last element of the path (directory-name)
+     *
+     * eqals dirname();
+     *
+     * @return PhorePath
+     */
+    public function dirname() : self {
+        return new self(dirname($this->path), $this->type);
+    }
+
 
     /**
      * Remove trailing /
