@@ -26,11 +26,13 @@ class File
     }
 
 
-    public function path() : Path {
+    public function path() : Path
+    {
         return new Path($this->filename);
     }
 
-    public function fopen(string $mode) : FileStream {
+    public function fopen(string $mode) : FileStream
+    {
         $fp = @fopen($this->filename, $mode);
         if ( ! $fp)
             throw new FileAccessException("fopen($this->filename): " . error_get_last()["message"]);
@@ -38,7 +40,8 @@ class File
     }
 
 
-    private function _read_content_locked () {
+    private function _read_content_locked ()
+    {
         $file = $this->fopen("r")->flock(LOCK_SH);
         $buf = "";
         while ( ! $file->feof())
@@ -48,7 +51,8 @@ class File
         return $buf;
     }
 
-    private function _write_content_locked ($content) {
+    private function _write_content_locked ($content)
+    {
         $this->fopen("w+")->flock(LOCK_EX)->fwrite($content)->flock(LOCK_UN)->fclose();
     }
 
@@ -61,7 +65,8 @@ class File
      * @return File|string
      * @throws FileAccessException
      */
-    public function content(string $setContent=null) {
+    public function content(string $setContent=null)
+    {
         try {
             if (func_num_args() > 0) {
                 $this->_write_content_locked($setContent);
@@ -79,7 +84,8 @@ class File
      * @return $this|array
      * @throws \Exception
      */
-    public function yaml($content=null) {
+    public function yaml($content=null)
+    {
         if ( ! class_exists(Yaml::class))
             throw new \Exception("Cannot read yaml: library symfony/yaml missing.");
 
@@ -100,16 +106,16 @@ class File
      * @return $this|array
      * @throws FileParsingException
      */
-    public function json($content=null) {
+    public function json($content=null)
+    {
         if (func_num_args() > 0) {
             $this->content(json_encode($content));
-
             return $this;
         }
-        $json = json_decode($content, true);
+        $json = json_decode($this->content(), true);
         if ($json === null) {
             throw new FileParsingException(
-                "JSON Parsing of file '{$this->filename}' failed."
+                "JSON Parsing of file '{$this->filename}' failed: " . json_last_error_msg()
             );
         }
 
@@ -123,7 +129,8 @@ class File
      * @return File
      * @throws PathOutOfBoundsException
      */
-    public function resolve($lockDir) : self {
+    public function resolve($lockDir) : self
+    {
         $parts = explode("/", $this->filename);
         $ret = [];
         foreach ($parts as $part) {
@@ -141,21 +148,33 @@ class File
         return $this;
     }
 
+    public function isDirectory () : bool
+    {
+        return file_exists($this->filename) && is_dir($this->filename);
+    }
 
-    public function rename ($newName) : self {
+    public function isFile () : bool
+    {
+        return file_exists($this->filename) && is_file($this->filename);
+    }
+
+    public function rename ($newName) : self
+    {
         if ( ! @rename($this->filename, $newName))
             throw new FileAccessException("Cannot rename file '{$this->filename}' to '{$newName}': " . implode(" ", error_get_last()));
         $this->filename = $newName;
         return $this;
     }
 
-    public function unlink() : self {
+    public function unlink() : self
+    {
         if ( ! @unlink($this->filename))
             throw new FileAccessException("Cannot unlink file '{$this->filename}': " . implode(" ", error_get_last()));
         return $this;
     }
 
-    public function mustExist() {
+    public function mustExist()
+    {
         if ( ! file_exists($this->filename))
             throw new FileNotFoundException("File '$this->filename' not found");
         return $this;
