@@ -14,7 +14,7 @@ use Phore\File\Exception\FileNotFoundException;
 use Phore\File\Exception\PathOutOfBoundsException;
 use Symfony\Component\Yaml\Yaml;
 
-class PhorePath
+class Path
 {
 
     protected $path;
@@ -81,10 +81,10 @@ class PhorePath
      *
      * @param string $subpath
      *
-     * @return PhorePath
+     * @return Path
      */
     public function xpath(string $subpath) : self {
-        $subpath = new PhorePath($subpath, $this->type);
+        $subpath = new Path($subpath, $this->type);
         $path = $this->path;
         if (substr($path,-1) == "/")
             $path .= $subpath->toRelative();
@@ -98,7 +98,7 @@ class PhorePath
      *
      * eqals dirname();
      *
-     * @return PhorePath
+     * @return Path
      */
     public function dirname() : self {
         return new self(dirname($this->path), $this->type);
@@ -110,7 +110,7 @@ class PhorePath
      *
      * @param $path
      *
-     * @return PhorePath
+     * @return Path
      */
     public function toRelative() : self
     {
@@ -132,7 +132,7 @@ class PhorePath
     /**
      *
      *
-     * @return PhorePath
+     * @return Path
      * @throws PathOutOfBoundsException
      * @internal param $lockDir
      *
@@ -165,6 +165,12 @@ class PhorePath
     public function __toString()
     {
         return $this->path;
+    }
+
+
+    public function Use(string $dirname) : self
+    {
+        return new self($dirname);
     }
 
 }

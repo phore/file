@@ -18,7 +18,7 @@ require __DIR__ . "/../vendor/autoload.php";
 Environment::setup();
 
 // Changing methods must return new objects
-$p = pe_path("/some");
+$p = ppath("/some");
 Assert::notSame($p, $p->toAbsolute());
 Assert::notSame($p, $p->toRelative());
 Assert::notSame($p, $p->resolve());

@@ -1,19 +1,16 @@
 <?php
-
-namespace Phore\File;
-
 /**
  * @param string $filename <p>
  * Relative Path to the file.
  * </p>
  * &tip.fopen-wrapper;
  *
- * @return PhoreFile
+ * @return \Phore\File\File
  */
-function file($filename) : PhoreFile {
-    return new PhoreFile($filename);
+function pfile($filename) : \Phore\File\File {
+    return new Phore\File\File($filename);
 }
 
-function path($path) : PhorePath {
-    return new PhorePath($path);
+function ppath($path) : \Phore\File\Path {
+    return new \Phore\File\Path($path);
 }

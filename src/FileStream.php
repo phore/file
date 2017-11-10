@@ -11,16 +11,16 @@ namespace Phore\File;
 
 use Phore\File\Exception\FileAccessException;
 
-class PhoreFileStream
+class FileStream
 {
 
     private $res;
     /**
-     * @var PhoreFile
+     * @var File
      */
     private $file;
 
-    public function __construct($res, PhoreFile $file)
+    public function __construct($res, File $file)
     {
         $this->res = $res;
         $this->file = $file;
@@ -68,7 +68,7 @@ class PhoreFileStream
         return $this;
     }
 
-    public function fclose() : PhoreFile {
+    public function fclose() : File {
         if (false === @fclose($this->res))
             throw new FileAccessException("Cannot get fgets('$this->file'): " . error_get_last()["message"]);
         return $this->file;

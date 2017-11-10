@@ -15,7 +15,7 @@ use Phore\File\Exception\FileParsingException;
 use Phore\File\Exception\PathOutOfBoundsException;
 use Symfony\Component\Yaml\Yaml;
 
-class PhoreFile
+class File
 {
 
     private $filename;
@@ -26,15 +26,15 @@ class PhoreFile
     }
 
 
-    public function path() : PhorePath {
-        return new PhorePath($this->filename);
+    public function path() : Path {
+        return new Path($this->filename);
     }
 
-    public function fopen(string $mode) : PhoreFileStream {
+    public function fopen(string $mode) : FileStream {
         $fp = @fopen($this->filename, $mode);
         if ( ! $fp)
             throw new FileAccessException("fopen($this->filename): " . error_get_last()["message"]);
-        return new PhoreFileStream($fp, $this);
+        return new FileStream($fp, $this);
     }
 
 
@@ -58,7 +58,7 @@ class PhoreFile
      *
      * @param string|null $setContent
      *
-     * @return PhoreFile|string
+     * @return File|string
      * @throws FileAccessException
      */
     public function content(string $setContent=null) {
@@ -120,7 +120,7 @@ class PhoreFile
     /**
      * @param $lockDir
      *
-     * @return PhoreFile
+     * @return File
      * @throws PathOutOfBoundsException
      */
     public function resolve($lockDir) : self {
@@ -167,4 +167,9 @@ class PhoreFile
         return $this->filename;
     }
 
+
+    public static function Use(string $filename) : self
+    {
+        return new self ($filename);
+    }
 }
