@@ -168,7 +168,7 @@ class Path
     }
 
 
-    public function Use(string $dirname) : self
+    public static function Use(string $dirname) : self
     {
         return new self($dirname);
     }
