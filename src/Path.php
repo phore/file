@@ -45,6 +45,16 @@ class Path
 
     }
 
+    /**
+     *
+     *
+     * @return string|null
+     */
+    public function getExtension()
+    {
+        return pathinfo($this->path, PATHINFO_EXTENSION);
+    }
+
 
     public function isRelative() : bool {
         return substr($this->path, 0, 1) !== "/";
