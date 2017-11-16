@@ -41,7 +41,8 @@ class Path
     }
 
 
-    public function sanitize() {
+    public function sanitize()
+    {
 
     }
 
@@ -56,11 +57,13 @@ class Path
     }
 
 
-    public function isRelative() : bool {
+    public function isRelative() : bool
+    {
         return substr($this->path, 0, 1) !== "/";
     }
 
-    public function isAbsolute() : bool {
+    public function isAbsolute() : bool
+    {
         return ! $this->isRelative();
     }
 
@@ -93,7 +96,8 @@ class Path
      *
      * @return Path
      */
-    public function xpath(string $subpath) : self {
+    public function xpath(string $subpath) : self
+    {
         $subpath = new Path($subpath, $this->type);
         $path = $this->path;
         if (substr($path,-1) == "/")
@@ -110,7 +114,8 @@ class Path
      *
      * @return Path
      */
-    public function dirname() : self {
+    public function dirname() : self
+    {
         return new self(dirname($this->path), $this->type);
     }
 
