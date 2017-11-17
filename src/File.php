@@ -129,6 +129,27 @@ class File
         return $json;
     }
 
+    /**
+     * @param null $content
+     *
+     * @return $this|array
+     * @throws FileParsingException
+     */
+    public function serialized($content=null)
+    {
+        if (func_num_args() > 0) {
+            $this->content(serialize($content));
+            return $this;
+        }
+        $serialize = unserialize($this->content());
+        if ($serialize === null) {
+            throw new FileParsingException(
+                "Unserialize of file '{$this->filename}' failed."
+            );
+        }
+
+        return $serialize;
+    }
 
     /**
      * @param $lockDir
