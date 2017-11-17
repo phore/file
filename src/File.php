@@ -78,6 +78,13 @@ class File
         }
     }
 
+
+    public function fileSize () : int
+    {
+        return filesize($this->filename);
+    }
+
+
     /**
      * @param null $content
      *
