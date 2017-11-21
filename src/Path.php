@@ -58,7 +58,7 @@ class Path
 
     public function isUrl () : bool
     {
-        return preg_match("|^(https?:|)//|", $this->path);
+        return preg_match("|^https?://|", $this->path);
     }
 
 
