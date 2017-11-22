@@ -56,6 +56,11 @@ class Path
         return pathinfo($this->path, PATHINFO_EXTENSION);
     }
 
+    public function isUrl () : bool
+    {
+        return preg_match("|^https?://|", $this->path);
+    }
+
 
     public function isRelative() : bool
     {
