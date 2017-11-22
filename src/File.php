@@ -51,9 +51,12 @@ class File
         return $buf;
     }
 
-    private function _write_content_locked ($content)
+    private function _write_content_locked ($content, bool $append = false)
     {
-        $this->fopen("w+")->flock(LOCK_EX)->fwrite($content)->flock(LOCK_UN)->fclose();
+        $mode = "w+";
+        if ($append)
+            $mode = "a+";
+        $this->fopen($mode)->flock(LOCK_EX)->fwrite($content)->flock(LOCK_UN)->fclose();
     }
 
 
@@ -77,6 +80,25 @@ class File
             throw new $e($e->getMessage(), $e->getCode(), $e);
         }
     }
+
+    /**
+     * @param string $appendContent
+     *
+     * @return File
+     */
+    public function contentAppend(string $appendContent) : self
+    {
+        try {
+            if (func_num_args() == 0) {
+                new \InvalidArgumentException("contentAppend expects exact 1 argument.");
+            }
+            $this->_write_content_locked($appendContent, true);
+            return $this;
+        } catch (\Exception $e) {
+            throw new $e($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
 
 
     public function fileSize () : int
